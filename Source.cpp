@@ -3,15 +3,15 @@ using namespace std;
 
 class Base
 {
-protected:
-	int x;
+//protected:
+//	int x;
 public:
 	Base()
 	{
 		printf("Base()\n");
-		x = 0;
+		//x = 0;
 	}
-	Base(int _x)
+	/*Base(int _x)
 	{
 		printf("Base(int _x)\n");
 		x = _x;
@@ -20,17 +20,17 @@ public:
 	{
 		printf("Base(const Base &b)\n");
 		x = b.x;
-	}
+	}*/
 	virtual ~Base()
 	{
 		printf("~Base()\n");
 	}
 	virtual string classname()
 	{
-		printf("virtual string classname()\n");
+		printf("virtual string classname() - Base\n");
 		return "Base";
 	}
-	virtual bool isA(string classname) //проверка типов
+	virtual bool isA(string classname) //РїСЂРѕРІРµСЂРєР° С‚РёРїРѕРІ
 	{
 		printf("virtual bool isA(string classname) - Base\n");
 		if (classname == "Base")
@@ -49,7 +49,7 @@ public:
 	{
 		printf("Inheritor1()\n");
 	}
-	Inheritor1(int _x) : Base(_x)
+	/*Inheritor1(int _x)
 	{
 		printf("Inheritor1(int _x)\n");
 	}
@@ -57,7 +57,7 @@ public:
 	{
 		printf("Inheritor1(int _x)\n");
 		x = inh.x;
-	}
+	}*/
 	~Inheritor1()
 	{
 		printf("~Inheritor1()\n");
@@ -75,8 +75,11 @@ public:
 			printf("true\n");
 			return true;
 		}
-		printf("false\n");
-		return false;
+		return Base::isA(classname); //РІС‹Р·РѕРІ РјРµС‚РѕРґР° РїСЂРµРґРєР°
+	}
+	void OK1()
+	{
+		printf("void OK1() - Inheritor1");
 	}
 };
 class Inheritor2 : public Base
@@ -86,7 +89,7 @@ public:
 	{
 		printf("Inheritor2()\n");
 	}
-	Inheritor2(int _x) : Base(_x)
+	/*Inheritor2(int _x) : Base(_x)
 	{
 		printf("Inheritor2(int _x)\n");
 	}
@@ -94,7 +97,7 @@ public:
 	{
 		printf("Inheritor2(int _x)\n");
 		x = inh.x;
-	}
+	}*/
 	~Inheritor2()
 	{
 		printf("~Inheritor2()\n");
@@ -112,79 +115,90 @@ public:
 			printf("true\n");
 			return true;
 		}
-		printf("false\n");
-		return false;
+		return Base::isA(classname);
+	}
+	void OK2()
+	{
+		printf("void OK2() - Inheritor2");
 	}
 };
-class Special
+class Inheritor3 : public Base
 {
 public:
-	Special()
+	Inheritor3()
 	{
-		printf("Special()\n");
+		printf("Inheritor3()\n");
 	}
-	/*Special(int _x) : Base(_x)
+	/*Inheritor3(int _x) : Base(_x)
 	{
 		printf("Inheritor2(int _x)\n");
 	}
-	Inheritor2(const Inheritor2& inh)
+	Inheritor3(const Inheritor3& inh)
 	{
-		printf("Inheritor2(int _x)\n");
+		printf("Inheritor3(int _x)\n");
 		x = inh.x;
 	}*/
-	~Special()
+	~Inheritor3()
 	{
-		printf("~Special()\n");
+		printf("~Inheritor3()\n");
 	}
-	string classname()
+	string classname() override
 	{
-		printf("string classname() override - Special\n");
-		return "Special";
+		printf("string classname() override - Inheritor3\n");
+		return "Inheritor3";
 	}
-	bool isA(string classname)
+	bool isA(string classname) override
 	{
-		printf("bool isA(string classname) override - Special\n");
-		if (classname == "Special")
+		printf("bool isA(string classname) override - Inheritor3\n");
+		if (classname == "Inheritor3")
 		{
 			printf("true\n");
 			return true;
 		}
-		printf("false\n");
-		return false;
+		return Base::isA(classname);
+	}
+	void OK3()
+	{
+		printf("void OK3() - Inheritor3");
 	}
 };
 
 int main()
 {
-	//проверка типов isA и classname
-	Base* base = new Inheritor1(); printf("\n");
-	Inheritor1* inh1 = new Inheritor1(); printf("\n");
-	Inheritor2* inh2 = new Inheritor2(); printf("\n");
-	Special* spec = new Special(); printf("\n\n");
+	//Р±РµР·РѕРїР°СЃРЅРѕРµ РїСЂРёРІРµРґРµРЅРёРµ С‚РёРїРѕРІ Рё РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅР°СЏ РїСЂРѕРІРµСЂРєР° С‚РёРїР° СЃ РїРѕРјРѕС‰СЊСЋ СЂРµР°Р»РёР·РѕРІР°РЅРЅРѕРіРѕ РјРµС‚РѕРґР° isA
 
-	//проверка типов
-	base->isA(base->classname()); printf("\n");
-	base->isA(inh1->classname()); printf("\n");
-	base->isA(inh2->classname()); printf("\n");
-	base->isA(spec->classname()); printf("\n");
+	Base* base[4] = { new Base(), new Inheritor1(), new Inheritor2(), new Inheritor3() }; printf("\n");
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (base[i]->classname() == "Inheritor1")
+		{
+			((Inheritor1*)base[i])->OK1();
+			printf("\n");
+		}
+
+		if (base[i]->isA("Inheritor2"))
+		{
+			((Inheritor2*)base[i])->OK2();
+			printf("\n");
+		}	
+
+		if (dynamic_cast<Inheritor3*>(base[i]) != nullptr)
+		{
+			dynamic_cast<Inheritor3*>(base[i])->OK3();
+			printf("\n");
+		}
+
+		printf("\n");
+	}
+
 	printf("\n\n");
-	
-	inh1->isA(inh1->classname()); printf("\n");
-	printf("\n\n");
-	
-	inh2->isA(inh2->classname()); printf("\n");
-	inh2->isA(inh1->classname()); printf("\n");
-	printf("\n\n");
-
-	spec->isA(inh1->classname()); printf("\n");
-
-	delete base; printf("\n");
-	delete inh1; printf("\n");
-	delete inh2; printf("\n");
-
-	//Продемонстрировать опасное приведение типов и предварительную проверку типа с помощью 
-	//реализованного метода isA. Продемонстрировать использование стандартных средств языка 
-	//(dynamic_cast в c++ или аналог на используемом языке).
+	for (int i = 0; i < 4; i++)
+	{
+		delete base[i];
+	}
 
 	return 0;
 }
+
+
